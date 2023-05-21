@@ -1,5 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import Notiflix from 'notiflix'
 
 // Отримуємо посилання на елементи з DOM
 const datePickerInput = document.getElementById("datetime-picker");
@@ -51,7 +52,7 @@ const options = {
 
     // Перевірка на вибір дати в майбутньому
     if (selectedDate < new Date()) {
-      window.alert("Please choose a date in the future");
+      Notiflix.Report.failure("Please choose a date in the future");
       startButton.disabled = true;
     } else {
       startButton.disabled = false;
