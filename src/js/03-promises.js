@@ -1,4 +1,5 @@
 import Notiflix from 'notiflix'
+const form = document.querySelector('.form');
 document.querySelector('.form').addEventListener('submit', function (event) {
   event.preventDefault();
 
@@ -22,6 +23,7 @@ document.querySelector('.form').addEventListener('submit', function (event) {
         Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
       });
   }
+  form.reset();
 });
 
 function createPromise(position, delay) {
