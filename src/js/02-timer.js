@@ -2,7 +2,7 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import Notiflix from 'notiflix'
 
-document.addEventListener('DOMContentLoaded', function() {
+
   const startButton = document.querySelector('[data-start]');
   const daysElement = document.querySelector('[data-days]');
   const hoursElement = document.querySelector('[data-hours]');
@@ -40,29 +40,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // Обробник натискання на кнопку "Start"
-  startButton.addEventListener('click', function() {
-    startButton.disabled = true;
-    const selectedDate = flatpickr.parseDate(document.querySelector('#datetime-picker').value);
-    const currentDate = new Date();
-    const timeDifference = selectedDate.getTime() - currentDate.getTime();
-
-    if (timeDifference <= 0) {
-      updateTimer(0);
-    } else {
-      updateTimer(timeDifference);
-      setInterval(() => {
-        const currentTime = new Date().getTime();
-        const remainingTime = selectedDate.getTime() - currentTime;
-
-        if (remainingTime <= 0) {
-          updateTimer(0);
-        } else {
-          updateTimer(remainingTime);
-        }
-      }, 1000);
-    }
-  });
+// Натискання на кнопку "Start"
+startButton.addEventListener('click', function() {
+  startButton.disabled = true;
+  const selectedDate = flatpickr.parseDate(document.querySelector('#datetime-picker').value);
+  const currentDate = new Date();
+  const timeDifference = selectedDate.getTime() - currentDate.getTime();
+  
+  if (timeDifference <= 0) {
+    updateTimer(0);
+  } else {
+    updateTimer(timeDifference);
+    
+    const timerInterval = setInterval(() => {
+      const currentTime = new Date().getTime();
+      const remainingTime = selectedDate.getTime() - currentTime;
+      
+      if (remainingTime <= 0) {
+        updateTimer(0);
+        clearInterval(timerInterval); // Зупинити таймер, якщо час закінчився
+      } else {
+        updateTimer(remainingTime);
+      }
+    }, 1000);
+  }
+});
 
   // Ініціалізація flatpickr
   flatpickr("#datetime-picker", {
@@ -73,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function() {
     onClose: validateDate
   });
   
-});
 
 // Для підрахунку значень використовуй готову функцію convertMs, де ms - різниця між кінцевою і поточною датою в мілісекундах.
 function convertMs(ms) {
