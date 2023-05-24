@@ -2,79 +2,76 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import Notiflix from 'notiflix'
 
-
   const startButton = document.querySelector('[data-start]');
   const daysElement = document.querySelector('[data-days]');
   const hoursElement = document.querySelector('[data-hours]');
   const minutesElement = document.querySelector('[data-minutes]');
   const secondsElement = document.querySelector('[data-seconds]');
 
-  // Кнопка Start неактивна при завантаженні сторінки
   startButton.disabled = true;
 
-  // Форматування чисел менше двох символів
-  function addLeadingZero(value) {
-    return value.toString().padStart(2, '0');
-  }
 
-  // Оновлення значень таймера
-  function updateTimer(ms) {
-    const { days, hours, minutes, seconds } = convertMs(ms);
-    daysElement.textContent = addLeadingZero(days);
-    hoursElement.textContent = addLeadingZero(hours);
-    minutesElement.textContent = addLeadingZero(minutes);
-    secondsElement.textContent = addLeadingZero(seconds);
-  }
-
-  // Перевірка валідності дати
-  function validateDate(selectedDates) {
-    const selectedDate = selectedDates[0];
-    const currentDate = new Date();
-
-    if (selectedDate < currentDate) {
-      Notiflix.Notify.failure('Please choose a date in the future');
-      startButton.disabled = true;
-    } else {
-      Notiflix.Notify.success('Valid date selected');
-      startButton.disabled = false;
-    }
-  }
-
-// Натискання на кнопку "Start"
-startButton.addEventListener('click', function() {
-  startButton.disabled = true;
-  const selectedDate = flatpickr.parseDate(document.querySelector('#datetime-picker').value);
-  const currentDate = new Date();
-  const timeDifference = selectedDate.getTime() - currentDate.getTime();
-  
-  if (timeDifference <= 0) {
-    updateTimer(0);
-  } else {
-    updateTimer(timeDifference);
-    
-    const timerInterval = setInterval(() => {
-      const currentTime = new Date().getTime();
-      const remainingTime = selectedDate.getTime() - currentTime;
-      
-      if (remainingTime <= 0) {
-        updateTimer(0);
-        clearInterval(timerInterval); // Зупинити таймер, якщо час закінчився
-      } else {
-        updateTimer(remainingTime);
-      }
-    }, 1000);
-  }
-});
-
-  // Ініціалізація flatpickr
-  flatpickr("#datetime-picker", {
+document.addEventListener('DOMContentLoaded', function () {
+  const options = {
     enableTime: true,
     time_24hr: true,
     defaultDate: new Date(),
     minuteIncrement: 1,
-    onClose: validateDate
-  });
+    onClose(selectedDates) {
+      const selectedDateTime = selectedDates[0];
+
+      if (selectedDateTime <= new Date()) {
+        Notiflix.Notify.failure("Please choose a date in the future");
+        startButton.disabled = true;
+    } else {
+      Notiflix.Notify.success('Valid date selected');
+    }
+
+      const startButton = document.querySelector('[data-start]');
+      startButton.disabled = false;
+    },
+  };
+
+  const dateTimePicker = flatpickr("#datetime-picker", options);
+
+  let countdownInterval;
+
+  function startCountdown() {
+    const selectedDateTime = dateTimePicker.selectedDates[0];
   
+    if (!selectedDateTime) {
+      Notiflix.Notify.failure("Please select a valid date and time.");
+      return;
+    }
+  
+    startButton.disabled = true; // Відключаємо кнопку "Start"
+  
+    clearInterval(countdownInterval);
+  
+    countdownInterval = setInterval(function () {
+      const currentTime = new Date().getTime();
+      const timeDifference = selectedDateTime - currentTime;
+  
+      if (timeDifference <= 0) {
+        clearInterval(countdownInterval);
+        updateCountdownDisplay(0, 0, 0, 0);
+        return;
+      }
+  
+      const { days, hours, minutes, seconds } = convertMs(timeDifference);
+      updateCountdownDisplay(days, hours, minutes, seconds);
+    }, 1000);
+  }
+
+  function updateCountdownDisplay(days, hours, minutes, seconds) {
+    daysElement.textContent = days;
+    hoursElement.textContent = hours;
+    minutesElement.textContent = minutes;
+    secondsElement.textContent = seconds;
+  }
+
+  startButton.addEventListener('click', startCountdown);
+});
 
 // Для підрахунку значень використовуй готову функцію convertMs, де ms - різниця між кінцевою і поточною датою в мілісекундах.
 function convertMs(ms) {
