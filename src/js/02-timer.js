@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
   
-    startButton.disabled = true; // Відключаємо кнопку "Start"
+    startButton.disabled = true; 
   
     clearInterval(countdownInterval);
   
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
   startButton.addEventListener('click', startCountdown);
 });
 
-// Для підрахунку значень використовуй готову функцію convertMs, де ms - різниця між кінцевою і поточною датою в мілісекундах.
+// Для підрахунку значень використовуй готову функцію convertMs, де ms - різниця між кінцевою і поточною датою в мілісекундах//
 function convertMs(ms) {
   const second = 1000;
   const minute = second * 60;
