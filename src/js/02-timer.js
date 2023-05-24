@@ -64,12 +64,15 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function updateCountdownDisplay(days, hours, minutes, seconds) {
-    daysElement.textContent = days;
-    hoursElement.textContent = hours;
-    minutesElement.textContent = minutes;
-    secondsElement.textContent = seconds;
+    daysElement.textContent = addLeadingZero(days);
+    hoursElement.textContent = addLeadingZero(hours);
+    minutesElement.textContent = addLeadingZero(minutes);
+    secondsElement.textContent = addLeadingZero(seconds);
   }
 
+  function addLeadingZero(value) {
+    return value.toString().padStart(2, '0');
+  }
   startButton.addEventListener('click', startCountdown);
 });
 
