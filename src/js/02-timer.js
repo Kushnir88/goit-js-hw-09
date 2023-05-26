@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   
     startButton.disabled = true; 
+    dateTimePicker._input.disabled = true;
   
     clearInterval(countdownInterval);
   
